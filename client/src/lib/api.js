@@ -23,9 +23,21 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Skip redirect when the failing request IS the login/signup call –
+      // those errors should surface to the form as a visible error message.
+      const requestUrl = error.config?.url || '';
+      const isAuthEndpoint =
+        requestUrl.includes('/auth/signin') ||
+        requestUrl.includes('/auth/signup');
+
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        // Dispatch a custom event so the AuthContext can clear state
+        // without a hard page reload (which causes a visible blank screen).
+        window.dispatchEvent(new CustomEvent('auth:logout'));
+      }
     }
     return Promise.reject(error);
   }

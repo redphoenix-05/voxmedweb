@@ -7,6 +7,17 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Listen for 401 events dispatched by the Axios interceptor so we can
+  // clear auth state without a hard page reload (which causes a blank screen).
+  useEffect(() => {
+    const handleForceLogout = () => {
+      setUser(null);
+      setLoading(false);
+    };
+    window.addEventListener('auth:logout', handleForceLogout);
+    return () => window.removeEventListener('auth:logout', handleForceLogout);
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
