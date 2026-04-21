@@ -51,9 +51,9 @@ export default function ManageHospitals() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Manage Hospitals</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Manage Hospitals</h1>
           <p className="text-muted-foreground mt-1">{hospitals.length} hospitals total</p>
         </div>
         <Select className="w-40" value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -66,6 +66,7 @@ export default function ManageHospitals() {
 
       <Card>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -128,6 +129,7 @@ export default function ManageHospitals() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
