@@ -22,7 +22,7 @@ export default function RevenueDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Revenue Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Revenue Dashboard</h1>
         <p className="text-muted-foreground mt-1">Platform earnings & analytics</p>
       </div>
 
@@ -80,11 +80,11 @@ export default function RevenueDashboard() {
           ) : (
             <div className="space-y-4">
               {monthly.map((m) => (
-                <div key={m.month} className="flex items-center justify-between border-b pb-3 last:border-0">
+                <div key={m.month} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b pb-3 last:border-0">
                   <div>
                     <p className="font-medium">{m.month}</p>
                   </div>
-                  <div className="flex gap-8 text-sm">
+                  <div className="flex flex-wrap gap-4 text-sm">
                     <div className="text-right">
                       <p className="text-muted-foreground">Revenue</p>
                       <p className="font-semibold">{formatCurrency(m.revenue)}</p>

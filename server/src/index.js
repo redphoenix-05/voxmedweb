@@ -30,7 +30,20 @@ const PORT = process.env.PORT || 5000;
 
 // Security
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'https://voxmedweb.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 

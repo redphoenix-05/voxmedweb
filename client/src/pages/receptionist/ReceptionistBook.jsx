@@ -54,7 +54,7 @@ export default function ReceptionistBook() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Book Appointment</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Book Appointment</h1>
         <p className="text-muted-foreground mt-1">Search patient and book appointment</p>
       </div>
 
@@ -79,6 +79,7 @@ export default function ReceptionistBook() {
           </div>
 
           {patients.length > 0 && (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -103,6 +104,7 @@ export default function ReceptionistBook() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -123,7 +125,7 @@ export default function ReceptionistBook() {
                   ))}
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Date</Label>
                   <Input type="date" value={form.appointment_date} onChange={e => setForm(f => ({ ...f, appointment_date: e.target.value }))} required />

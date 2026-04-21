@@ -51,7 +51,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground mt-1">Overview of VoxMed Connect platform</p>
       </div>
 
@@ -83,9 +83,9 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="space-y-3">
               {stats.monthly.slice(0, 6).map((m) => (
-                <div key={m.month} className="flex items-center justify-between py-2 border-b last:border-0">
+                <div key={m.month} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-2 border-b last:border-0">
                   <span className="text-sm font-medium">{m.month}</span>
-                  <div className="flex gap-6 text-sm">
+                  <div className="flex flex-wrap gap-4 text-sm">
                     <span>Revenue: <strong>{formatCurrency(m.revenue)}</strong></span>
                     <span className="text-primary">Admin: <strong>{formatCurrency(m.admin_profit)}</strong></span>
                   </div>

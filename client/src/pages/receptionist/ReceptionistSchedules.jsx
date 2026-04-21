@@ -29,9 +29,9 @@ export default function ReceptionistSchedules() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Doctor Schedules</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Doctor Schedules</h1>
           <p className="text-muted-foreground mt-1">View available doctors and their schedules</p>
         </div>
         <Select className="w-40" value={dayFilter} onChange={e => setDayFilter(e.target.value)}>
@@ -42,6 +42,7 @@ export default function ReceptionistSchedules() {
 
       <Card>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -81,6 +82,7 @@ export default function ReceptionistSchedules() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
