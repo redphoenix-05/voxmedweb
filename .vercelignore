@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment files (set these in Vercel dashboard instead)
+.env
+.env.local
+.env.*.local
+
+# Dev / seed scripts (not needed in production)
+server/scripts/
+
+# Build artifacts
+client/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Supabase local dev
+supabase/.branches/
+supabase/.temp/

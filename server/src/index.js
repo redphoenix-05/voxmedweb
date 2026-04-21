@@ -84,6 +84,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`VoxMed server running on port ${PORT}`);
-});
+// Export app for Vercel serverless runtime
+export default app;
+
+// Only start the HTTP server when running locally (not in Vercel)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`VoxMed server running on port ${PORT}`);
+  });
+}
