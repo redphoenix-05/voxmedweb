@@ -26,8 +26,32 @@ export default function HospitalDashboard() {
     { title: 'Platform Fee', value: formatCurrency(s.totalAdminCut || 0), icon: FlaskConical, color: 'text-indigo-600 bg-indigo-100 dark:bg-indigo-900/30' },
   ];
 
+  const hospitalStatus = data?.hospital?.status;
+
   return (
     <div className="space-y-6">
+      {hospitalStatus === 'pending' && (
+        <div className="rounded-lg border border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-4 flex items-start gap-3">
+          <span className="text-2xl">⏳</span>
+          <div>
+            <p className="font-semibold text-yellow-800 dark:text-yellow-300">Awaiting Admin Approval</p>
+            <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-0.5">
+              Your hospital registration is under review. You will gain full access once a VoxMed admin approves your hospital.
+            </p>
+          </div>
+        </div>
+      )}
+      {hospitalStatus === 'rejected' && (
+        <div className="rounded-lg border border-red-400 bg-red-50 dark:bg-red-900/20 p-4 flex items-start gap-3">
+          <span className="text-2xl">❌</span>
+          <div>
+            <p className="font-semibold text-red-800 dark:text-red-300">Registration Rejected</p>
+            <p className="text-sm text-red-700 dark:text-red-400 mt-0.5">
+              Your hospital registration was rejected. Please contact VoxMed support for more information.
+            </p>
+          </div>
+        </div>
+      )}
       <div>
         <h1 className="text-3xl font-bold">Hospital Dashboard</h1>
         <p className="text-muted-foreground mt-1">Your hospital overview</p>

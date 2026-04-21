@@ -92,7 +92,7 @@ export default function ManageHospitals() {
                         <p className="text-xs text-muted-foreground">{h.email}</p>
                       </div>
                     </TableCell>
-                    <TableCell>{h.profiles?.full_name || 'N/A'}</TableCell>
+                    <TableCell>{h.admin?.full_name || 'N/A'}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <span className="text-sm">{h.license_number}</span>

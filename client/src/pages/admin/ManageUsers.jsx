@@ -106,15 +106,15 @@ export default function ManageUsers() {
                     <TableCell>{u.phone || '-'}</TableCell>
                     <TableCell>{roleBadge(u.role)}</TableCell>
                     <TableCell>
-                      <Badge variant={u.is_active ? 'success' : 'destructive'}>
-                        {u.is_active ? 'Active' : 'Inactive'}
+                      <Badge variant={u.is_active !== false ? 'success' : 'destructive'}>
+                        {u.is_active !== false ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
                     <TableCell>{formatDate(u.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => toggleActive(u.id)} title={u.is_active ? 'Deactivate' : 'Activate'}>
-                          {u.is_active ? <UserX className="h-4 w-4 text-yellow-600" /> : <UserCheck className="h-4 w-4 text-green-600" />}
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => toggleActive(u.id)} title={u.is_active !== false ? 'Deactivate' : 'Activate'}>
+                          {u.is_active !== false ? <UserX className="h-4 w-4 text-yellow-600" /> : <UserCheck className="h-4 w-4 text-green-600" />}
                         </Button>
                         <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => handleDelete(u.id)}>
                           <Trash2 className="h-4 w-4" />
