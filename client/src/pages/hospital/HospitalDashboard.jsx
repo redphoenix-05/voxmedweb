@@ -53,7 +53,7 @@ export default function HospitalDashboard() {
         </div>
       )}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">Hospital Dashboard</h1>
+        <h1 className="text-3xl font-bold">Hospital Dashboard</h1>
         <p className="text-muted-foreground mt-1">Your hospital overview</p>
       </div>
 
@@ -81,9 +81,9 @@ export default function HospitalDashboard() {
           <CardContent>
             <div className="space-y-3">
               {data.monthly.slice(0, 6).map(m => (
-                <div key={m.month} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-2 border-b last:border-0">
+                <div key={m.month} className="flex items-center justify-between py-2 border-b last:border-0">
                   <span className="font-medium">{m.month}</span>
-                  <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex gap-6 text-sm">
                     <span>Revenue: <strong>{formatCurrency(m.revenue)}</strong></span>
                     <span className="text-primary">Profit: <strong>{formatCurrency(m.profit)}</strong></span>
                   </div>

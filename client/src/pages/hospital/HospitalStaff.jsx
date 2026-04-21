@@ -79,7 +79,7 @@ export default function HospitalStaff() {
                   <TableCell className="font-medium">{s.profiles?.full_name}</TableCell>
                   <TableCell>{s.profiles?.email}</TableCell>
                   <TableCell>{s.profiles?.phone || '-'}</TableCell>
-                  <TableCell><Badge variant="secondary">{s.role?.replace('_', ' ')}</Badge></TableCell>
+                  <TableCell><Badge variant="secondary">{s.role === 'lab' ? 'Lab Staff' : s.role?.replace('_', ' ')}</Badge></TableCell>
                   <TableCell><Badge variant={s.profiles?.is_active ? 'success' : 'destructive'}>{s.profiles?.is_active ? 'Active' : 'Inactive'}</Badge></TableCell>
                   <TableCell className="text-right">
                     <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => handleDelete(s.id)}>

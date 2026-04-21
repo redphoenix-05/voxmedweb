@@ -12,7 +12,7 @@ router.get('/patients', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('appointments')
-      .select('*, profiles!appointments_patient_id_fkey(id, full_name, email, phone)')
+      .select('*, profiles!patient_id(id, full_name, email, phone)')
       .eq('hospital_id', req.hospitalId)
       .eq('status', 'completed')
       .order('appointment_date', { ascending: false });
@@ -29,7 +29,7 @@ router.get('/records', async (req, res) => {
     const { patient_id } = req.query;
     let query = supabaseAdmin
       .from('medical_records')
-      .select('*, profiles!medical_records_patient_id_fkey(full_name, email), medical_tests(name)')
+      .select('*, profiles!patient_id(full_name, email), medical_tests(name)')
       .eq('hospital_id', req.hospitalId)
       .order('created_at', { ascending: false });
 

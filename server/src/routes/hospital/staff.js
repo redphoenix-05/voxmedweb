@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('hospital_staff')
-      .select('*, profiles!hospital_staff_user_id_fkey(full_name, email, phone, is_active)')
+      .select('*, profiles!profile_id(full_name, email, phone, is_active)')
       .eq('hospital_id', req.hospitalId)
       .order('created_at', { ascending: false });
     if (error) return res.status(400).json({ error: error.message });
@@ -50,10 +50,11 @@ router.post('/', validate(staffSchema), async (req, res) => {
       await supabaseAdmin.from('profiles').update({ phone }).eq('id', authData.user.id);
     }
 
-    // Link to hospital
+    // Link to hospital — cloud DB stores 'lab' for lab_staff role in hospital_staff
+    const dbRole = role === 'lab_staff' ? 'lab' : role;
     const { data, error } = await supabaseAdmin
       .from('hospital_staff')
-      .insert({ user_id: authData.user.id, hospital_id: req.hospitalId, role })
+      .insert({ profile_id: authData.user.id, hospital_id: req.hospitalId, role: dbRole })
       .select()
       .single();
 
@@ -69,7 +70,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const { data: staff } = await supabaseAdmin
       .from('hospital_staff')
-      .select('user_id')
+      .select('profile_id')
       .eq('id', req.params.id)
       .eq('hospital_id', req.hospitalId)
       .single();
@@ -77,7 +78,7 @@ router.delete('/:id', async (req, res) => {
     if (!staff) return res.status(404).json({ error: 'Staff not found' });
 
     await supabaseAdmin.from('hospital_staff').delete().eq('id', req.params.id);
-    await supabaseAdmin.from('profiles').update({ is_active: false }).eq('id', staff.user_id);
+    await supabaseAdmin.from('profiles').update({ is_active: false }).eq('id', staff.profile_id);
 
     res.json({ message: 'Staff removed' });
   } catch (err) {

@@ -46,7 +46,8 @@ export default function RegisterPage() {
       });
       navigate('/login', { state: { message: 'Hospital registered! Please sign in.' } });
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      const raw = err.response?.data?.error;
+      setError(typeof raw === 'string' ? raw : raw?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }

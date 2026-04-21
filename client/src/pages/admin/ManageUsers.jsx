@@ -63,9 +63,9 @@ export default function ManageUsers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Manage Users</h1>
+          <h1 className="text-3xl font-bold">Manage Users</h1>
           <p className="text-muted-foreground mt-1">{total} users total</p>
         </div>
         <Select className="w-44" value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }}>
@@ -81,7 +81,6 @@ export default function ManageUsers() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -127,7 +126,6 @@ export default function ManageUsers() {
               )}
             </TableBody>
           </Table>
-          </div>
         </CardContent>
       </Card>
 

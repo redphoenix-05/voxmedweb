@@ -12,7 +12,7 @@ router.get('/schedules', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('doctors')
-      .select('id, specialty, consultation_fee, profiles!doctors_profile_id_fkey(full_name), doctor_schedules(*)')
+      .select('id, specialty, consultation_fee, profiles!profile_id(full_name), doctor_schedules(*)')
       .eq('hospital_id', req.hospitalId)
       .eq('status', 'approved');
     if (error) return res.status(400).json({ error: error.message });

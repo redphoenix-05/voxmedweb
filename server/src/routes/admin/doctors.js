@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const { status } = req.query;
     let query = supabaseAdmin
       .from('doctors')
-      .select('*, profiles!doctors_profile_id_fkey(full_name, email), hospitals(name)')
+      .select('*, profiles!profile_id(full_name, email), hospitals!hospital_id(name)')
       .order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
 

@@ -44,7 +44,7 @@ export default function HospitalAppointments() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
+        <h1 className="text-3xl font-bold">Appointments</h1>
         <p className="text-muted-foreground mt-1">{appointments.length} appointments</p>
       </div>
 
@@ -61,7 +61,6 @@ export default function HospitalAppointments() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -102,7 +101,6 @@ export default function HospitalAppointments() {
               ))}
             </TableBody>
           </Table>
-          </div>
         </CardContent>
       </Card>
     </div>

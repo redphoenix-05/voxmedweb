@@ -15,8 +15,8 @@ router.get('/', async (req, res) => {
       .from('appointments')
       .select(`
         *,
-        profiles!appointments_patient_id_fkey(full_name, email, phone),
-        doctors!inner(id, profile_id, profiles!doctors_profile_id_fkey(full_name))
+        profiles!patient_id(full_name, email, phone),
+        doctors!doctor_id(id, profile_id, profiles!profile_id(full_name))
       `, { count: 'exact' })
       .eq('hospital_id', req.hospitalId)
       .order('scheduled_start_at', { ascending: false })

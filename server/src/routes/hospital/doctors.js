@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const { status } = req.query;
     let query = supabaseAdmin
       .from('doctors')
-      .select('*, profiles!doctors_user_id_fkey(full_name, email, phone), departments(name), doctor_schedules(*)')
+      .select('*, profiles!profile_id(full_name, email, phone), departments(name), doctor_schedules(*)')
       .eq('hospital_id', req.hospitalId)
       .order('created_at', { ascending: false });
 
@@ -39,7 +39,7 @@ router.patch('/:id/approve', async (req, res) => {
       .single();
 
     if (error) return res.status(400).json({ error: error.message });
-    await supabaseAdmin.from('profiles').update({ role: 'doctor' }).eq('id', data.user_id);
+    await supabaseAdmin.from('profiles').update({ role: 'doctor' }).eq('id', data.profile_id);
     res.json({ doctor: data, message: 'Doctor approved' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to approve doctor' });
