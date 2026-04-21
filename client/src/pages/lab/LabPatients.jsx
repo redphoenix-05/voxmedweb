@@ -43,7 +43,7 @@ export default function LabPatients() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Lab Patients</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Lab Patients</h1>
         <p className="text-muted-foreground mt-1">View patients and their records</p>
       </div>
 
@@ -55,6 +55,7 @@ export default function LabPatients() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardContent className="p-0">
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -79,6 +80,7 @@ export default function LabPatients() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
 

@@ -67,9 +67,9 @@ export default function HospitalDoctors() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Doctor Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Doctor Management</h1>
           <p className="text-muted-foreground mt-1">{doctors.length} doctors</p>
         </div>
         <Select className="w-40" value={filter} onChange={e => setFilter(e.target.value)}>
@@ -82,6 +82,7 @@ export default function HospitalDoctors() {
 
       <Card>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -102,7 +103,7 @@ export default function HospitalDoctors() {
                       <p className="text-xs text-muted-foreground">{d.profiles?.email}</p>
                     </div>
                   </TableCell>
-                  <TableCell>{d.specialization}</TableCell>
+                  <TableCell>{d.specialty}</TableCell>
                   <TableCell>{d.room_number || '-'}</TableCell>
                   <TableCell>${d.consultation_fee || 0}</TableCell>
                   <TableCell><Badge variant={d.status === 'approved' ? 'success' : d.status === 'pending' ? 'warning' : 'destructive'}>{d.status}</Badge></TableCell>
@@ -130,6 +131,7 @@ export default function HospitalDoctors() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 

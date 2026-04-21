@@ -67,9 +67,9 @@ export default function HospitalTests() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Medical Tests</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Medical Tests</h1>
           <p className="text-muted-foreground mt-1">{tests.length} tests configured</p>
         </div>
         <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Test</Button>
@@ -77,6 +77,7 @@ export default function HospitalTests() {
 
       <Card>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -119,6 +120,7 @@ export default function HospitalTests() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 

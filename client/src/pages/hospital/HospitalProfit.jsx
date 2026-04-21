@@ -21,7 +21,7 @@ export default function HospitalProfit() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Profit Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Profit Dashboard</h1>
         <p className="text-muted-foreground mt-1">Financial analytics</p>
       </div>
 
@@ -74,11 +74,11 @@ export default function HospitalProfit() {
                       <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${Math.min((m.profit / (m.revenue || 1)) * 100, 100)}%` }} />
                     </div>
                   </div>
-                  <div className="text-right text-sm min-w-[120px]">
+                  <div className="text-right text-sm min-w-30">
                     <span className="text-muted-foreground">Rev: </span>
                     <span className="font-semibold">{formatCurrency(m.revenue)}</span>
                   </div>
-                  <div className="text-right text-sm min-w-[120px]">
+                  <div className="text-right text-sm min-w-30">
                     <span className="text-muted-foreground">Profit: </span>
                     <span className="font-semibold text-primary">{formatCurrency(m.profit)}</span>
                   </div>
