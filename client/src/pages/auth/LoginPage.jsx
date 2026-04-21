@@ -36,7 +36,8 @@ export default function LoginPage() {
       const role = user.profile?.role || 'patient';
       navigate(roleRedirects[role] || '/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      const raw = err.response?.data?.error;
+      setError(typeof raw === 'string' ? raw : 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

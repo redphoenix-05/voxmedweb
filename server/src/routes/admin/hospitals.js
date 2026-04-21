@@ -11,24 +11,36 @@ router.use(authenticate, authorize('admin'));
 router.get('/', async (req, res) => {
   try {
     const { status } = req.query;
+
+    // Step 1: fetch hospitals
     let query = supabaseAdmin
       .from('hospitals')
-      .select(`*, hospital_staff!hospital_staff_hospital_id_fkey(
-        role,
-        profiles:profiles!hospital_staff_profile_id_fkey(full_name, email)
-      )`)
+      .select('*')
       .order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
 
-    const { data, error } = await query;
+    const { data: hospitalsData, error } = await query;
     if (error) return res.status(400).json({ error: error.message });
 
-    // Attach the admin profile directly on each hospital for easy use
-    const hospitals = (data || []).map(h => {
-      const adminStaff = (h.hospital_staff || []).find(s => s.role === 'admin');
-      return { ...h, admin: adminStaff?.profiles || null };
-    });
+    if (!hospitalsData || hospitalsData.length === 0) {
+      return res.json({ hospitals: [] });
+    }
 
+    // Step 2: fetch admin staff for those hospitals in one query
+    const hospitalIds = hospitalsData.map(h => h.id);
+    const { data: staffData } = await supabaseAdmin
+      .from('hospital_staff')
+      .select('hospital_id, profiles!hospital_staff_profile_id_fkey(full_name, email)')
+      .in('hospital_id', hospitalIds)
+      .eq('role', 'admin');
+
+    // Build a map: hospitalId → admin profile
+    const adminMap = {};
+    for (const s of staffData || []) {
+      adminMap[s.hospital_id] = s.profiles || null;
+    }
+
+    const hospitals = hospitalsData.map(h => ({ ...h, admin: adminMap[h.id] || null }));
     res.json({ hospitals });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch hospitals' });
@@ -40,15 +52,19 @@ router.get('/:id', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('hospitals')
-      .select(`*, hospital_staff!hospital_staff_hospital_id_fkey(
-        role,
-        profiles:profiles!hospital_staff_profile_id_fkey(full_name, email)
-      )`)
+      .select('*')
       .eq('id', req.params.id)
       .single();
     if (error) return res.status(404).json({ error: 'Hospital not found' });
-    const adminStaff = (data.hospital_staff || []).find(s => s.role === 'admin');
-    res.json({ hospital: { ...data, admin: adminStaff?.profiles || null } });
+
+    const { data: staffData } = await supabaseAdmin
+      .from('hospital_staff')
+      .select('profiles!hospital_staff_profile_id_fkey(full_name, email)')
+      .eq('hospital_id', req.params.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    res.json({ hospital: { ...data, admin: staffData?.profiles || null } });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch hospital' });
   }

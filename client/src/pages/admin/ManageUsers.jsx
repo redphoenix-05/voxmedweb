@@ -15,10 +15,12 @@ export default function ManageUsers() {
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   useEffect(() => { loadUsers(); }, [filter, page]);
 
   const loadUsers = async () => {
+    setFetchError('');
     try {
       const params = new URLSearchParams({ page, limit: 50 });
       if (filter) params.set('role', filter);
@@ -27,6 +29,8 @@ export default function ManageUsers() {
       setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
+      const raw = err.response?.data?.error;
+      setFetchError(typeof raw === 'string' ? raw : 'Failed to load users. Check server connection.');
     } finally {
       setLoading(false);
     }
@@ -78,6 +82,12 @@ export default function ManageUsers() {
           <option value="patient">Patient</option>
         </Select>
       </div>
+
+      {fetchError && (
+        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20">
+          {fetchError}
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-0">

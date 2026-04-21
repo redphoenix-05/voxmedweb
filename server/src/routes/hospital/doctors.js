@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const { status } = req.query;
     let query = supabaseAdmin
       .from('doctors')
-      .select('*, profiles!profile_id(full_name, email, phone), departments(name), doctor_schedules(*)')
+      .select('*, profiles!doctors_profile_id_fkey(full_name, email, phone), doctor_schedules!doctor_schedules_doctor_id_fkey(*)')
       .eq('hospital_id', req.hospitalId)
       .order('created_at', { ascending: false });
 
@@ -32,7 +32,7 @@ router.patch('/:id/approve', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('doctors')
-      .update({ status: 'approved' })
+      .update({ status: 'approved', approved_by_hospital: true })
       .eq('id', req.params.id)
       .eq('hospital_id', req.hospitalId)
       .select()

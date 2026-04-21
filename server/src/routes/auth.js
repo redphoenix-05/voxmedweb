@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../lib/supabase.js';
 import { authenticate } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -20,6 +21,32 @@ const signUpSchema = z.object({
 const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+});
+
+const doctorSignUpSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  full_name: z.string().min(2).max(100),
+  hospital_id: z.string().uuid(),
+  specialty: z.string().min(2).max(100),
+  experience_years: z.number().int().min(0).max(60),
+  license_number: z.string().min(2).max(100),
+  bio: z.string().max(1000).optional(),
+});
+
+// Public: list approved hospitals (used in doctor registration form)
+router.get('/hospitals', async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('hospitals')
+      .select('id, name, city')
+      .eq('status', 'approved')
+      .order('name');
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ hospitals: data || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch hospitals' });
+  }
 });
 
 // Sign up (hospital admin only)
@@ -90,7 +117,13 @@ router.post('/signin', validate(signInSchema), async (req, res) => {
   try {
     const { email, password } = req.validated;
 
-    const { data, error } = await supabaseAdmin.auth.signInWithPassword({ email, password });
+    // Use a fresh client per request so signInWithPassword never pollutes
+    // the supabaseAdmin singleton's session state (which would switch
+    // subsequent DB calls from service-role key → user JWT, breaking RLS bypass)
+    const authClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const { data, error } = await authClient.auth.signInWithPassword({ email, password });
     if (error) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -146,7 +179,10 @@ router.post('/refresh', async (req, res) => {
     const { refresh_token } = req.body;
     if (!refresh_token) return res.status(400).json({ error: 'Refresh token required' });
 
-    const { data, error } = await supabaseAdmin.auth.refreshSession({ refresh_token });
+    const refreshClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const { data, error } = await refreshClient.auth.refreshSession({ refresh_token });
     if (error) return res.status(401).json({ error: 'Invalid refresh token' });
 
     res.json({
@@ -155,6 +191,59 @@ router.post('/refresh', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'Token refresh failed' });
+  }
+});
+
+// Sign up (doctor)
+router.post('/signup/doctor', validate(doctorSignUpSchema), async (req, res) => {
+  try {
+    const { email, password, full_name, hospital_id, specialty, experience_years, license_number, bio } = req.validated;
+
+    // Verify the hospital exists and is approved
+    const { data: hospital, error: hospitalErr } = await supabaseAdmin
+      .from('hospitals')
+      .select('id, name')
+      .eq('id', hospital_id)
+      .eq('status', 'approved')
+      .single();
+    if (hospitalErr || !hospital) {
+      return res.status(400).json({ error: 'Selected hospital not found or not approved' });
+    }
+
+    // Create auth user — role stays as default until hospital approves
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name, role: 'patient' },
+    });
+    if (error) return res.status(400).json({ error: error.message });
+
+    const userId = data.user.id;
+
+    // Create doctor record with pending status
+    const { error: docError } = await supabaseAdmin
+      .from('doctors')
+      .insert({
+        profile_id: userId,
+        hospital_id,
+        specialty,
+        experience_years,
+        license_number,
+        bio: bio || '',
+        status: 'pending',
+        approved_by_hospital: false,
+      });
+
+    if (docError) {
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+      return res.status(400).json({ error: docError.message });
+    }
+
+    res.status(201).json({ message: 'Doctor registration submitted. Awaiting hospital approval.' });
+  } catch (err) {
+    console.error('Doctor signup error:', err);
+    res.status(500).json({ error: 'Failed to register doctor' });
   }
 });
 

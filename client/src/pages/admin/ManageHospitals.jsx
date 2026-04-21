@@ -13,16 +13,20 @@ export default function ManageHospitals() {
   const [hospitals, setHospitals] = useState([]);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   useEffect(() => { loadHospitals(); }, [filter]);
 
   const loadHospitals = async () => {
+    setFetchError('');
     try {
       const params = filter ? `?status=${filter}` : '';
       const { data } = await api.get(`/admin/hospitals${params}`);
       setHospitals(data.hospitals || []);
     } catch (err) {
       console.error(err);
+      const raw = err.response?.data?.error;
+      setFetchError(typeof raw === 'string' ? raw : 'Failed to load hospitals. Check server connection.');
     } finally {
       setLoading(false);
     }
@@ -63,6 +67,12 @@ export default function ManageHospitals() {
           <option value="rejected">Rejected</option>
         </Select>
       </div>
+
+      {fetchError && (
+        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20">
+          {fetchError}
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-0">
