@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const { status } = req.query;
     let query = supabaseAdmin
       .from('doctors')
-      .select('*, profiles!doctors_user_id_fkey(full_name, email), hospitals(name)')
+      .select('*, profiles!doctors_profile_id_fkey(full_name, email), hospitals(name)')
       .order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
 
@@ -35,7 +35,7 @@ router.patch('/:id/approve', async (req, res) => {
     if (error) return res.status(400).json({ error: error.message });
 
     // Update profile role
-    await supabaseAdmin.from('profiles').update({ role: 'doctor' }).eq('id', data.user_id);
+    await supabaseAdmin.from('profiles').update({ role: 'doctor' }).eq('id', data.profile_id);
 
     res.json({ doctor: data, message: 'Doctor approved' });
   } catch (err) {

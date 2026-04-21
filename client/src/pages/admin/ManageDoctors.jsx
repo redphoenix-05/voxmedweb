@@ -93,7 +93,7 @@ export default function ManageDoctors() {
                         <p className="text-xs text-muted-foreground">{d.profiles?.email}</p>
                       </div>
                     </TableCell>
-                    <TableCell>{d.specialization}</TableCell>
+                    <TableCell>{d.specialty}</TableCell>
                     <TableCell>{d.hospitals?.name || 'Unassigned'}</TableCell>
                     <TableCell>{d.license_number}</TableCell>
                     <TableCell>{d.experience_years} yrs</TableCell>
