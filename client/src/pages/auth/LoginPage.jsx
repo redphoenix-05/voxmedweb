@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,10 @@ const roleRedirects = {
   hospital_admin: '/hospital',
   receptionist: '/receptionist',
   lab_staff: '/lab',
-  doctor: '/hospital',
-  patient: '/',
 };
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { user, loading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
@@ -25,6 +23,13 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const successMessage = location.state?.message || '';
+  const redirectPath = location.state?.from?.pathname || roleRedirects[user?.profile?.role] || '/unauthorized';
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(redirectPath, { replace: true });
+    }
+  }, [authLoading, navigate, redirectPath, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,9 +37,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const user = await login(email, password);
-      const role = user.profile?.role || 'patient';
-      navigate(roleRedirects[role] || '/');
+      await login(email, password);
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     } finally {
