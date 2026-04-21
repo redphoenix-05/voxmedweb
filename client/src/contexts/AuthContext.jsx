@@ -12,15 +12,20 @@ export function AuthProvider({ children }) {
     const savedUser = localStorage.getItem('user');
     if (token && savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
-        // Verify token is still valid
-        api.get('/auth/me').then(res => {
-          const u = { ...JSON.parse(savedUser), profile: res.data.user };
-          setUser(u);
-          localStorage.setItem('user', JSON.stringify(u));
-        }).catch(() => {
-          logout();
-        });
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed);
+        // Verify token is still valid, then refresh profile
+        api.get('/auth/me')
+          .then(res => {
+            const u = { ...parsed, profile: res.data.user };
+            setUser(u);
+            localStorage.setItem('user', JSON.stringify(u));
+          })
+          .catch(() => {
+            logout();
+          })
+          .finally(() => setLoading(false));
+        return; // loading will be set false inside the promise chain
       } catch {
         logout();
       }
