@@ -11,12 +11,25 @@ router.use(authenticate, authorize('admin'));
 router.get('/', async (req, res) => {
   try {
     const { status } = req.query;
-    let query = supabaseAdmin.from('hospitals').select('*, profiles!hospitals_admin_id_fkey(full_name, email)').order('created_at', { ascending: false });
+    let query = supabaseAdmin
+      .from('hospitals')
+      .select(`*, hospital_staff!hospital_staff_hospital_id_fkey(
+        role,
+        profiles:profiles!hospital_staff_profile_id_fkey(full_name, email)
+      )`)
+      .order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
 
     const { data, error } = await query;
     if (error) return res.status(400).json({ error: error.message });
-    res.json({ hospitals: data });
+
+    // Attach the admin profile directly on each hospital for easy use
+    const hospitals = (data || []).map(h => {
+      const adminStaff = (h.hospital_staff || []).find(s => s.role === 'admin');
+      return { ...h, admin: adminStaff?.profiles || null };
+    });
+
+    res.json({ hospitals });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch hospitals' });
   }
@@ -27,11 +40,15 @@ router.get('/:id', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('hospitals')
-      .select('*, profiles!hospitals_admin_id_fkey(full_name, email)')
+      .select(`*, hospital_staff!hospital_staff_hospital_id_fkey(
+        role,
+        profiles:profiles!hospital_staff_profile_id_fkey(full_name, email)
+      )`)
       .eq('id', req.params.id)
       .single();
     if (error) return res.status(404).json({ error: 'Hospital not found' });
-    res.json({ hospital: data });
+    const adminStaff = (data.hospital_staff || []).find(s => s.role === 'admin');
+    res.json({ hospital: { ...data, admin: adminStaff?.profiles || null } });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch hospital' });
   }

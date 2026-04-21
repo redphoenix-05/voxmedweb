@@ -57,7 +57,15 @@ router.get('/', async (req, res) => {
       .select('id', { count: 'exact', head: true })
       .eq('hospital_id', req.hospitalId);
 
+    // Fetch hospital record for status
+    const { data: hospital } = await supabaseAdmin
+      .from('hospitals')
+      .select('id, name, status, is_active')
+      .eq('id', req.hospitalId)
+      .single();
+
     res.json({
+      hospital,
       summary: { totalEarnings, totalHospitalProfit, totalAdminCut, doctorCount, appointmentCount, staffCount },
       monthly: Object.entries(monthly).map(([month, data]) => ({ month, ...data })).sort((a, b) => b.month.localeCompare(a.month)),
       perTest,
