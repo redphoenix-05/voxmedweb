@@ -73,7 +73,7 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 border-b px-6">
           <Activity className="h-7 w-7 text-primary" />
-          <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <span className="text-xl font-bold bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             VoxMed
           </span>
           <button className="ml-auto lg:hidden" onClick={() => setSidebarOpen(false)}>
