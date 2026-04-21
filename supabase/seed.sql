@@ -3,6 +3,54 @@
 -- Run this AFTER schema.sql via Supabase SQL Editor
 -- ============================================
 
+-- Ensure the `user_role` enum contains required labels before inserting profiles.
+DO $$
+BEGIN
+  -- Create the enum if it doesn't exist yet (safe for re-runs).
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+    EXECUTE 'CREATE TYPE public.user_role AS ENUM (''admin'',''hospital_admin'',''receptionist'',''lab_staff'',''doctor'',''patient'')';
+  ELSE
+    -- Add any missing enum labels one-by-one.
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'admin'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''admin''';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'hospital_admin'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''hospital_admin''';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'receptionist'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''receptionist''';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'lab_staff'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''lab_staff''';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'doctor'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''doctor''';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+      WHERE t.typname = 'user_role' AND e.enumlabel = 'patient'
+    ) THEN
+      EXECUTE 'ALTER TYPE public.user_role ADD VALUE ''patient''';
+    END IF;
+  END IF;
+END
+$$;
+
 -- ============================================
 -- 1. CREATE ADMIN USER
 -- ============================================
