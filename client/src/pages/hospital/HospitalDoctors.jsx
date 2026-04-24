@@ -105,7 +105,7 @@ export default function HospitalDoctors() {
                   </TableCell>
                   <TableCell>{d.specialty}</TableCell>
                   <TableCell>{d.room_number || '-'}</TableCell>
-                  <TableCell>${d.consultation_fee || 0}</TableCell>
+                  <TableCell>৳{d.consultation_fee || 0}</TableCell>
                   <TableCell><Badge variant={d.status === 'approved' ? 'success' : d.status === 'pending' ? 'warning' : 'destructive'}>{d.status}</Badge></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
@@ -144,7 +144,7 @@ export default function HospitalDoctors() {
             <Input value={assignForm.room_number} onChange={e => setAssignForm(f => ({ ...f, room_number: e.target.value }))} placeholder="e.g. 301A" />
           </div>
           <div className="space-y-2">
-            <Label>Consultation Fee ($)</Label>
+            <Label>Consultation Fee (৳)</Label>
             <Input type="number" value={assignForm.consultation_fee} onChange={e => setAssignForm(f => ({ ...f, consultation_fee: e.target.value }))} placeholder="0.00" />
           </div>
         </div>

@@ -294,3 +294,41 @@ CREATE INDEX idx_appointments_date ON appointments(appointment_date);
 CREATE INDEX idx_medical_records_patient ON medical_records(patient_id);
 CREATE INDEX idx_payments_hospital ON payments(hospital_id);
 CREATE INDEX idx_payments_patient ON payments(patient_id);
+
+-- ============================================
+-- VIEWS
+-- ============================================
+
+-- public_doctors: patient-facing view of approved, available doctors
+-- Used by the mobile app to list doctors patients can book/chat with.
+CREATE OR REPLACE VIEW public_doctors AS
+SELECT
+  d.id,
+  d.profile_id,
+  d.hospital_id,
+  d.specialty,
+  d.sub_specialty,
+  d.department,
+  d.qualifications,
+  d.experience_years,
+  d.license_number,
+  d.bio,
+  d.consultation_fee,
+  d.room_number,
+  d.patients_count,
+  d.reviews_count,
+  d.rating,
+  d.is_available,
+  d.chamber_address,
+  d.chamber_city,
+  d.status,
+  d.approved_by_hospital,
+  d.created_at,
+  d.updated_at
+FROM doctors d
+WHERE d.status = 'approved'
+  AND d.approved_by_hospital = true
+  AND d.is_available = true;
+
+-- Grant SELECT on the view to the anon and authenticated roles
+GRANT SELECT ON public_doctors TO anon, authenticated;

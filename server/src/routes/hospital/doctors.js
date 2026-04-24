@@ -32,7 +32,7 @@ router.patch('/:id/approve', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('doctors')
-      .update({ status: 'approved', approved_by_hospital: true })
+      .update({ status: 'approved', approved_by_hospital: true, is_available: true })
       .eq('id', req.params.id)
       .eq('hospital_id', req.hospitalId)
       .select()

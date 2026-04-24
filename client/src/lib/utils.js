@@ -14,8 +14,8 @@ export function formatDate(date) {
 }
 
 export function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return '৳' + new Intl.NumberFormat('en-BD', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 }

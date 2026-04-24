@@ -130,7 +130,7 @@ export default function HospitalTests() {
           <div className="space-y-2"><Label>Test Name</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
           <div className="space-y-2"><Label>Description</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
           <div className="space-y-2"><Label>Category</Label><Input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="e.g. Blood, Radiology" /></div>
-          <div className="space-y-2"><Label>Price ($)</Label><Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required /></div>
+          <div className="space-y-2"><Label>Price (৳)</Label><Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required /></div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Hospital Profit %</Label><Input type="number" value={form.hospital_profit_percent} onChange={e => setForm(f => ({ ...f, hospital_profit_percent: e.target.value }))} /></div>
             <div className="space-y-2"><Label>Admin Profit %</Label><Input type="number" value={form.admin_profit_percent} onChange={e => setForm(f => ({ ...f, admin_profit_percent: e.target.value }))} /></div>
