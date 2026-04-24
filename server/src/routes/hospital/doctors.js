@@ -94,17 +94,38 @@ const scheduleSchema = z.object({
   is_active: z.boolean().default(true),
 });
 
-// Set doctor schedule
+// Set doctor schedule — select-then-update-or-insert avoids relying on a
+// UNIQUE(doctor_id, day_of_week) constraint that may not exist in the cloud.
 router.post('/:id/schedule', validate(scheduleSchema), async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
+    // Check whether a schedule already exists for this doctor + day
+    const { data: existing, error: selectError } = await supabaseAdmin
       .from('doctor_schedules')
-      .upsert(
-        { doctor_id: req.params.id, ...req.validated },
-        { onConflict: 'doctor_id,day_of_week' }
-      )
-      .select()
-      .single();
+      .select('id')
+      .eq('doctor_id', req.params.id)
+      .eq('day_of_week', req.validated.day_of_week)
+      .maybeSingle();
+
+    if (selectError) return res.status(400).json({ error: selectError.message });
+
+    let data, error;
+    if (existing) {
+      // Update existing row
+      ({ data, error } = await supabaseAdmin
+        .from('doctor_schedules')
+        .update(req.validated)
+        .eq('id', existing.id)
+        .select()
+        .single());
+    } else {
+      // Insert new row
+      ({ data, error } = await supabaseAdmin
+        .from('doctor_schedules')
+        .insert({ doctor_id: req.params.id, ...req.validated })
+        .select()
+        .single());
+    }
+
     if (error) return res.status(400).json({ error: error.message });
     res.json({ schedule: data });
   } catch (err) {
