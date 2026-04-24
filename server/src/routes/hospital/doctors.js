@@ -90,8 +90,8 @@ const scheduleSchema = z.object({
   day_of_week: z.number().min(0).max(6),
   start_time: z.string(),
   end_time: z.string(),
-  max_patients: z.number().min(1).default(20),
-  is_available: z.boolean().default(true),
+  slot_duration_minutes: z.number().min(5).default(30),
+  is_active: z.boolean().default(true),
 });
 
 // Set doctor schedule

@@ -50,7 +50,7 @@ export default function ReceptionistSchedules() {
                 <TableHead>Specialization</TableHead>
                 <TableHead>Day</TableHead>
                 <TableHead>Time</TableHead>
-                <TableHead>Max Patients</TableHead>
+                <TableHead>Slot (min)</TableHead>
                 <TableHead>Room</TableHead>
               </TableRow>
             </TableHeader>
@@ -74,7 +74,7 @@ export default function ReceptionistSchedules() {
                   </TableCell>
                   <TableCell>
                     <span className="flex items-center gap-1 text-sm">
-                      <Users className="h-3 w-3" /> {s.max_patients}
+                      <Users className="h-3 w-3" /> {s.slot_duration_minutes} min
                     </span>
                   </TableCell>
                   <TableCell>{s.doctors?.room_number || '-'}</TableCell>

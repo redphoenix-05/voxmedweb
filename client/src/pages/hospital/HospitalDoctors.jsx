@@ -20,7 +20,7 @@ export default function HospitalDoctors() {
   const [assignDialog, setAssignDialog] = useState(null);
   const [scheduleDialog, setScheduleDialog] = useState(null);
   const [assignForm, setAssignForm] = useState({ room_number: '', department_id: '', consultation_fee: '' });
-  const [scheduleForm, setScheduleForm] = useState({ day_of_week: 1, start_time: '09:00', end_time: '17:00', max_patients: 20 });
+  const [scheduleForm, setScheduleForm] = useState({ day_of_week: 1, start_time: '09:00', end_time: '17:00', slot_duration_minutes: 30 });
 
   useEffect(() => { loadDoctors(); }, [filter]);
 
@@ -56,7 +56,7 @@ export default function HospitalDoctors() {
       await api.post(`/hospital/doctors/${scheduleDialog}/schedule`, {
         ...scheduleForm,
         day_of_week: parseInt(scheduleForm.day_of_week),
-        max_patients: parseInt(scheduleForm.max_patients),
+        slot_duration_minutes: parseInt(scheduleForm.slot_duration_minutes),
       });
       setScheduleDialog(null);
       loadDoctors();
@@ -175,8 +175,8 @@ export default function HospitalDoctors() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Max Patients</Label>
-            <Input type="number" value={scheduleForm.max_patients} onChange={e => setScheduleForm(f => ({ ...f, max_patients: e.target.value }))} />
+            <Label>Slot Duration (minutes)</Label>
+            <Input type="number" value={scheduleForm.slot_duration_minutes} onChange={e => setScheduleForm(f => ({ ...f, slot_duration_minutes: e.target.value }))} />
           </div>
         </div>
         <DialogFooter>
